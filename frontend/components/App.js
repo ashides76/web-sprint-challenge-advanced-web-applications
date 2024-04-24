@@ -5,6 +5,7 @@ import LoginForm from './LoginForm'
 import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
+import axios from 'axios'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -32,10 +33,26 @@ export default function App() {
   const login = ({ username, password }) => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
+    setSpinnerOn(true)
     // and launch a request to the proper endpoint.
-    // On success, we should set the token to local storage in a 'token' key,
-    // put the server success message in its proper state, and redirect
-    // to the Articles screen. Don't forget to turn off the spinner!
+    const postLogin = {
+      username: username,
+      password: password
+    }
+    axios.post(loginUrl, postLogin)
+      .then(res => {
+        // On success, we should set the token to local storage in a 'token' key,
+        localStorage.setItem('token', res.data.token)
+        // put the server success message in its proper state, and redirect
+        // to the Articles screen. Don't forget to turn off the spinner!
+        setMessage(res.data.message)
+        navigate('/articles')
+        setSpinnerOn(false);
+      })
+      .catch(err => {
+        setMessage(err.response.message)
+        setSpinnerOn(false);
+      })
   }
 
   const getArticles = () => {
@@ -68,8 +85,8 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner />
-      <Message />
+      <Spinner on={spinnerOn}/>
+      <Message message={message}/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
@@ -78,7 +95,7 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
               <ArticleForm />
