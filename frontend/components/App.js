@@ -21,10 +21,17 @@ export default function App() {
   const navigate = useNavigate()
   const redirectToLogin = () => { /* ✨ implement */ }
   const redirectToArticles = () => { /* ✨ implement */ }
+  const token = localStorage.getItem('token')
+
 
   const logout = () => {
     // ✨ implement
     // If a token is in local storage it should be removed,
+    if (token) {
+      localStorage.removeItem('token')
+      setMessage("Goodbye!")
+      navigate('/')
+    }
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
@@ -58,12 +65,27 @@ export default function App() {
   const getArticles = () => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
+    setSpinnerOn(true)
+    
     // and launch an authenticated request to the proper endpoint.
-    // On success, we should set the articles in their proper state and
-    // put the server success message in its proper state.
-    // If something goes wrong, check the status of the response:
-    // if it's a 401 the token might have gone bad, and we should redirect to login.
-    // Don't forget to turn off the spinner!
+    // const token = localStorage.getItem('token')
+    axios.get(articlesUrl, {headers: {Authorization: token}})
+      .then(res => {
+        // On success, we should set the articles in their proper state and
+        // put the server success message in its proper state.
+        setArticles(res.data.articles)
+        setMessage(res.data.message)
+        setSpinnerOn(false)
+      })
+      .catch(err => {
+        // If something goes wrong, check the status of the response:
+        console.error(err)
+        setMessage(err?.response?.data?.message) 
+        // if it's a 401 the token might have gone bad, and we should redirect to login.
+        if(err?.response?.state === 401) logout()
+        // Don't forget to turn off the spinner!
+        setSpinnerOn(false)
+      })
   }
 
   const postArticle = article => {
@@ -99,7 +121,7 @@ export default function App() {
           <Route path="articles" element={
             <>
               <ArticleForm />
-              <Articles />
+              <Articles getArticles={getArticles} articles={articles} />
             </>
           } />
         </Routes>
