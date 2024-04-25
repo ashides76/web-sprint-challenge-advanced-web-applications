@@ -88,20 +88,46 @@ export default function App() {
       })
   }
 
+  // const postArticle = article => {
+  //   // ✨ implement
+  //   // The flow is very similar to the `getArticles` function.
+  //   // You'll know what to do! Use log statements or breakpoints
+  //   // to inspect the response from the server.
+  //   setSpinnerOn(true)
+  //   axios.post(articlesUrl, article, {headers: {Authorization: token}})
+  //     .then(res => {
+  //       console.log(res)
+  //       setArticles(prevArry => [...prevArry, res.data.article])
+  //       setMessage(res.data.message)
+  //       setSpinnerOn(false)
+  //     })
+  //     .catch(err => {
+  //       console.error(err)
+  //       setSpinnerOn(false)
+  //     })
+  // }
   const postArticle = article => {
-    // ✨ implement
-    // The flow is very similar to the `getArticles` function.
-    // You'll know what to do! Use log statements or breakpoints
-    // to inspect the response from the server.
-    setSpinnerOn(true)
-    axios.post(articlesUrl, article, {headers: {Authorization: token}})
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.error(err)
-      })
-  }
+    setSpinnerOn(true);
+    
+    // Simulate an error condition based on a flag (for testing purposes)
+    const simulateError = true; // Set this flag to true to simulate an error
+    
+    // Simulate an error response
+    if (simulateError) {
+        // Make the actual POST request
+        axios.post(articlesUrl, article, { headers: { Authorization: token } })
+            .then(res => {
+              console.log(res);
+              setArticles(prevArry => [...prevArry, res.data.article]);
+              setMessage(res?.data?.message);
+              setSpinnerOn(false);
+            })
+            .catch(err => {
+              setMessage(err?.request?.response)
+              setSpinnerOn(false);
+            });
+    }
+};
 
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
@@ -128,7 +154,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle}/>
+              <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId}/>
               <Articles getArticles={getArticles} articles={articles} />
             </>
           } />
