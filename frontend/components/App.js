@@ -21,6 +21,7 @@ export default function App() {
   const navigate = useNavigate()
   const redirectToLogin = () => { /* ✨ implement */ }
   const redirectToArticles = () => { /* ✨ implement */ }
+  
   const token = localStorage.getItem('token')
 
 
@@ -79,7 +80,6 @@ export default function App() {
       })
       .catch(err => {
         // If something goes wrong, check the status of the response:
-        console.error(err)
         setMessage(err?.response?.data?.message) 
         // if it's a 401 the token might have gone bad, and we should redirect to login.
         if(err?.response?.state === 401) logout()
@@ -93,6 +93,14 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    setSpinnerOn(true)
+    axios.post(articlesUrl, article, {headers: {Authorization: token}})
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   const updateArticle = ({ article_id, article }) => {
@@ -120,7 +128,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
+              <ArticleForm postArticle={postArticle}/>
               <Articles getArticles={getArticles} articles={articles} />
             </>
           } />
