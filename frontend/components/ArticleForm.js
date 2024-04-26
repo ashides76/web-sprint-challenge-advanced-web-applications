@@ -6,18 +6,25 @@ const initialFormValues = { title: '', text: '', topic: '' }
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
-  const { postArticle, setCurrentArticleId } = props
+  const { postArticle, currentArticle, updateArticle } = props
 
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
+    if (currentArticle) {
+      const {title, text, topic} = currentArticle
+      setValues({title, text, topic})
+    } else {
+      setValues(initialFormValues)
+    }
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
 
-  })
+  }, [currentArticle])
 
   const onChange = evt => {
     const { id, value } = evt.target
+    console.log(id);
     setValues({ ...values, [id]: value })
   }
 
@@ -26,8 +33,21 @@ export default function ArticleForm(props) {
     // ✨ implement
     // We must submit a new post or update an existing one,
     // depending on the truthyness of the `currentArticle` prop.
-    postArticle(values)
-    setValues(initialFormValues)
+    if (!currentArticle){
+      postArticle(values)
+      setValues(initialFormValues)
+    // } else {
+    //   const changeArticle = {
+    //     title: values.title.trim(), 
+    //     text: values.text.trim(), 
+    //     topic: values.text.trim(),
+    //   }
+    //   updateArticle(values.article_id, changeArticle)
+    // }
+    } else {
+      const { article_id, ...articleData } = currentArticle // Extract article_id and other data
+      updateArticle({ article_id, article: { ...values, ...articleData } }) // Merge values with existing data
+    }
   }
 
   const isDisabled = () => {

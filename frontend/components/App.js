@@ -88,54 +88,61 @@ export default function App() {
       })
   }
 
-  // const postArticle = article => {
+  const postArticle = article => {
+    // ✨ implement
+    // The flow is very similar to the `getArticles` function.
+    // You'll know what to do! Use log statements or breakpoints
+    // to inspect the response from the server.
+    setSpinnerOn(true)
+    axios.post(articlesUrl, article, {headers: {Authorization: token}})
+      .then(res => {
+        console.log(res)
+        setArticles(prevArry => [...prevArry, res.data.article])
+        setMessage(res?.data?.message)
+        setSpinnerOn(false)
+      })
+      .catch(err => {
+        setMessage(err?.request?.response)
+        setSpinnerOn(false)
+      })
+  }
+
+  // const updateArticle = ({ article_id, article }) => {
+  //   console.log('article_id:', article_id)
+  //   console.log('article:', article)
   //   // ✨ implement
-  //   // The flow is very similar to the `getArticles` function.
-  //   // You'll know what to do! Use log statements or breakpoints
-  //   // to inspect the response from the server.
-  //   setSpinnerOn(true)
-  //   axios.post(articlesUrl, article, {headers: {Authorization: token}})
+  //   // You got this!
+  //   axios.put(`${articlesUrl}/${article_id}`, article, {headers: {Authorization: token}})
   //     .then(res => {
   //       console.log(res)
-  //       setArticles(prevArry => [...prevArry, res.data.article])
-  //       setMessage(res.data.message)
-  //       setSpinnerOn(false)
   //     })
   //     .catch(err => {
   //       console.error(err)
-  //       setSpinnerOn(false)
   //     })
   // }
-  const postArticle = article => {
-    setSpinnerOn(true);
-    
-    // Simulate an error condition based on a flag (for testing purposes)
-    const simulateError = true; // Set this flag to true to simulate an error
-    
-    // Simulate an error response
-    if (simulateError) {
-        // Make the actual POST request
-        axios.post(articlesUrl, article, { headers: { Authorization: token } })
-            .then(res => {
-              console.log(res);
-              setArticles(prevArry => [...prevArry, res.data.article]);
-              setMessage(res?.data?.message);
-              setSpinnerOn(false);
-            })
-            .catch(err => {
-              setMessage(err?.request?.response)
-              setSpinnerOn(false);
-            });
+    const updateArticle = ({ article_id, article }) => {
+      console.log('Updating article:', article_id, article);
+      axios.put(`${articlesUrl}/${article_id}`, article, { headers: { Authorization: token } })
+        .then(res => {
+          console.log('Update successful:', res);
+          // Optionally, update state or display a message
+        })
+        .catch(err => {
+          console.error('Update failed:', err);
+          // Handle errors if necessary
+        });
     }
-};
-
-  const updateArticle = ({ article_id, article }) => {
-    // ✨ implement
-    // You got this!
-  }
-
+  
   const deleteArticle = article_id => {
     // ✨ implement
+    axios.delete(`${articlesUrl}/${article_id}`, {headers: {Authorization: token}})
+    .then(res => {
+      setArticles(articles.filter(article => article.article_id !== article_id))
+      setMessage(res?.data?.message)
+    })
+    .catch(err => {
+      console.message(err?.request?.response)
+    })
   }
 
   return (
@@ -154,8 +161,8 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle} setCurrentArticleId={setCurrentArticleId}/>
-              <Articles getArticles={getArticles} articles={articles} />
+              <ArticleForm postArticle={postArticle} currentArticle={currentArticleId} updateArticle={updateArticle}/>
+              <Articles getArticles={getArticles} articles={articles} setCurrentArticleId={setCurrentArticleId} deleteArticle={deleteArticle}/>
             </>
           } />
         </Routes>
