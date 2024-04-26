@@ -6,12 +6,13 @@ const initialFormValues = { title: '', text: '', topic: '' }
 export default function ArticleForm(props) {
   const [values, setValues] = useState(initialFormValues)
   // ✨ where are my props? Destructure them here
-  const { postArticle, currentArticle, updateArticle } = props
+  const { postArticle, currentArticle, updateArticle, setCurrentArticleId } = props
 
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     if (currentArticle) {
+      console.log('currentArticle:', currentArticle)
       const {title, text, topic} = currentArticle
       setValues({title, text, topic})
     } else {
@@ -36,18 +37,21 @@ export default function ArticleForm(props) {
     if (!currentArticle){
       postArticle(values)
       setValues(initialFormValues)
-    // } else {
-    //   const changeArticle = {
-    //     title: values.title.trim(), 
-    //     text: values.text.trim(), 
-    //     topic: values.text.trim(),
-    //   }
-    //   updateArticle(values.article_id, changeArticle)
-    // }
     } else {
-      const { article_id, ...articleData } = currentArticle // Extract article_id and other data
-      updateArticle({ article_id, article: { ...values, ...articleData } }) // Merge values with existing data
+      const changeArticle = {
+        article_id: values.article_id,
+        title: values.title.trim(), 
+        text: values.text.trim(), 
+        topic: values.text.trim(),
+      }
+      // const {article_id, title, text, topic} = values
+      updateArticle(values.article_id, changeArticle)
+      setCurrentArticleId()
     }
+    // } else {
+    //   const { article_id, ...articleData } = currentArticle // Extract article_id and other data
+    //   updateArticle({ article_id, article: { ...values, ...articleData } }) // Merge values with existing data
+    // }
   }
 
   const isDisabled = () => {

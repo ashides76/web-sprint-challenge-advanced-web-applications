@@ -106,32 +106,34 @@ export default function App() {
         setSpinnerOn(false)
       })
   }
+  const currentArticle = articles.find(article => article.article_id === currentArticleId)
+  console.log("currentArticle:", currentArticle)
 
-  // const updateArticle = ({ article_id, article }) => {
-  //   console.log('article_id:', article_id)
-  //   console.log('article:', article)
-  //   // ✨ implement
-  //   // You got this!
-  //   axios.put(`${articlesUrl}/${article_id}`, article, {headers: {Authorization: token}})
-  //     .then(res => {
-  //       console.log(res)
-  //     })
-  //     .catch(err => {
-  //       console.error(err)
-  //     })
-  // }
-    const updateArticle = ({ article_id, article }) => {
-      console.log('Updating article:', article_id, article);
-      axios.put(`${articlesUrl}/${article_id}`, article, { headers: { Authorization: token } })
-        .then(res => {
-          console.log('Update successful:', res);
-          // Optionally, update state or display a message
-        })
-        .catch(err => {
-          console.error('Update failed:', err);
-          // Handle errors if necessary
-        });
-    }
+  const updateArticle = ({ article_id, article }) => {
+    console.log('article_id:', article_id)
+    console.log('article:', article)
+    // ✨ implement
+    // You got this!
+    axios.put(`${articlesUrl}/${article_id}`, article, {headers: {Authorization: token}})
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+    // const updateArticle = ({ article_id, article }) => {
+    //   console.log('Updating article:', article_id, article);
+    //   axios.put(`${articlesUrl}/${article_id}`, article, { headers: { Authorization: token } })
+    //     .then(res => {
+    //       console.log('Update successful:', res);
+    //       // Optionally, update state or display a message
+    //     })
+    //     .catch(err => {
+    //       console.error('Update failed:', err);
+    //       // Handle errors if necessary
+    //     });
+    // }
   
   const deleteArticle = article_id => {
     // ✨ implement
@@ -161,7 +163,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle} currentArticle={currentArticleId} updateArticle={updateArticle}/>
+              <ArticleForm postArticle={postArticle} currentArticle={currentArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId}/>
               <Articles getArticles={getArticles} articles={articles} setCurrentArticleId={setCurrentArticleId} deleteArticle={deleteArticle}/>
             </>
           } />
