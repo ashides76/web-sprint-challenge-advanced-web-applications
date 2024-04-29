@@ -96,7 +96,6 @@ export default function App() {
     setSpinnerOn(true)
     axios.post(articlesUrl, article, {headers: {Authorization: token}})
       .then(res => {
-        console.log(res)
         setArticles(prevArry => [...prevArry, res.data.article])
         setMessage(res?.data?.message)
         setSpinnerOn(false)
@@ -107,34 +106,24 @@ export default function App() {
       })
   }
   const currentArticle = articles.find(article => article.article_id === currentArticleId)
-  console.log("currentArticle:", currentArticle)
 
   const updateArticle = ({ article_id, article }) => {
-    console.log('article_id:', article_id)
-    console.log('article:', article)
     // ✨ implement
     // You got this!
     axios.put(`${articlesUrl}/${article_id}`, article, {headers: {Authorization: token}})
       .then(res => {
-        console.log(res)
+        setArticles(prevArticles => 
+          prevArticles.map(item => {
+            return item.article_id === article_id ? article : item
+          })
+        )
+        setMessage(res.data.message)
       })
       .catch(err => {
-        console.error(err)
+        console.error(err?.request?.response)
       })
   }
-    // const updateArticle = ({ article_id, article }) => {
-    //   console.log('Updating article:', article_id, article);
-    //   axios.put(`${articlesUrl}/${article_id}`, article, { headers: { Authorization: token } })
-    //     .then(res => {
-    //       console.log('Update successful:', res);
-    //       // Optionally, update state or display a message
-    //     })
-    //     .catch(err => {
-    //       console.error('Update failed:', err);
-    //       // Handle errors if necessary
-    //     });
-    // }
-  
+
   const deleteArticle = article_id => {
     // ✨ implement
     axios.delete(`${articlesUrl}/${article_id}`, {headers: {Authorization: token}})

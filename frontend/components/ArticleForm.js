@@ -12,7 +12,6 @@ export default function ArticleForm(props) {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     if (currentArticle) {
-      console.log('currentArticle:', currentArticle)
       const {title, text, topic} = currentArticle
       setValues({title, text, topic})
     } else {
@@ -25,7 +24,6 @@ export default function ArticleForm(props) {
 
   const onChange = evt => {
     const { id, value } = evt.target
-    console.log(id);
     setValues({ ...values, [id]: value })
   }
 
@@ -39,14 +37,16 @@ export default function ArticleForm(props) {
       setValues(initialFormValues)
     } else {
       const changeArticle = {
-        article_id: values.article_id,
+        // article_id: values.article_id,
         title: values.title.trim(), 
         text: values.text.trim(), 
-        topic: values.text.trim(),
+        topic: values.topic.trim(),
       }
       // const {article_id, title, text, topic} = values
-      updateArticle(values.article_id, changeArticle)
-      setCurrentArticleId()
+      updateArticle({article_id: currentArticle.article_id, article: changeArticle })
+      setCurrentArticleId(null)
+      setValues(initialFormValues)
+
     }
     // } else {
     //   const { article_id, ...articleData } = currentArticle // Extract article_id and other data
