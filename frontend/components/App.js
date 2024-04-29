@@ -110,6 +110,7 @@ export default function App() {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    setSpinnerOn(true)
     axios.put(`${articlesUrl}/${article_id}`, article, {headers: {Authorization: token}})
       .then(res => {
         setArticles(prevArticles => 
@@ -118,9 +119,11 @@ export default function App() {
           })
         )
         setMessage(res.data.message)
+        setSpinnerOn(false)
       })
       .catch(err => {
         console.error(err?.request?.response)
+        setSpinnerOn(false)
       })
   }
 
